@@ -1,0 +1,13 @@
+<configuration debug="false" scan="true" scanPeriod="10 seconds">
+	<property name="logFileDir" value="${logFileDir:-${user.home}}" />
+	<appender name="logfile" class="ch.qos.logback.core.FileAppender">
+		<file>${logFileDir}/amortization.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d [%thread] %level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<root level="trace">
+		<appender-ref ref="logfile" />
+	</root>
+</configuration>

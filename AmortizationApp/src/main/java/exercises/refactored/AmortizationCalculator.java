@@ -21,6 +21,12 @@ import net.jcip.annotations.NotThreadSafe;
  */
 @NotThreadSafe
 public class AmortizationCalculator {
+	
+	public interface Observer {
+		void monthlyAmortizationResult();
+	}
+	
+	
 	private static final int DOLLAR_TO_CENTS_FACTOR = 100;
 	private static final int MONTHS_PAY_YEAR = 12;
 	private final Loan loan;
