@@ -1,10 +1,10 @@
 package exercises.refactored;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Singleton;
+
+import net.jcip.annotations.NotThreadSafe;
 
 import org.springframework.util.Assert;
-import net.jcip.annotations.NotThreadSafe;
 
 /**
  * This is the core AmortizationCalculator.
@@ -20,7 +20,15 @@ import net.jcip.annotations.NotThreadSafe;
  * </ol>
  */
 @NotThreadSafe
+@Singleton
 public class AmortizationCalculator {
+	
+	public interface Observer {
+		void monthlyAmortizationResult(MonthlyPayment monthlyPayment);
+	}
+	
+	Observer observer;
+	
 	private static final int DOLLAR_TO_CENTS_FACTOR = 100;
 	private static final int MONTHS_PAY_YEAR = 12;
 	private final Loan loan;
@@ -30,7 +38,6 @@ public class AmortizationCalculator {
 	private int termMonths = 0;
 	private double monthlyInterest;
 	private int maxNumberOfPayments;
-	private List<MonthlyPayment> payments;
 	private boolean calculationDone;
 	/**
 	 * Temorary calculating fields
@@ -45,9 +52,10 @@ public class AmortizationCalculator {
 	private long curMonthlyPrincipalPaid;
 	private long curBalance; 
 	
-	public AmortizationCalculator(Loan loanInput) {
+	public AmortizationCalculator(Loan loanInput, Observer observer) {
 		Assert.notNull(loanInput, "Loan info must not be null");
 		this.loan = loanInput;
+		this.observer = observer;
 	}
 
 	public void calculateSchedule() {
@@ -64,7 +72,7 @@ public class AmortizationCalculator {
 		}
 	}
 	private void summarizeSchedule() {
-		schedule.setPayments(payments);
+//		schedule.setPayments(payments);
 		schedule.setMonthlyAmount(monthlyAmount);
 		schedule.setNumberOfPayments(paymentNumber);
 		schedule.setTotalInterestPaid(totalInterestPaid);
@@ -75,7 +83,6 @@ public class AmortizationCalculator {
 	private void initFieldsFromLoanInfo() {
 		termMonths = loan.getTermYears() * MONTHS_PAY_YEAR;
 		maxNumberOfPayments = termMonths + 1;
-		payments = new ArrayList<>(maxNumberOfPayments);
 		amountBorrowed = Math.round(loan.getLoanAmount() * DOLLAR_TO_CENTS_FACTOR); // in cents
 		monthlyInterest = loan.getInterestRate() / (MONTHS_PAY_YEAR * DOLLAR_TO_CENTS_FACTOR);
 		balance = amountBorrowed;
@@ -98,7 +105,8 @@ public class AmortizationCalculator {
 
 	private void calculateAmortizationTable() {
 		while ((balance > 0) && (paymentNumber <= maxNumberOfPayments)) {
-			payments.add(computeCurMonthlyPayment());
+			//payments.add(computeCurMonthlyPayment());
+			observer.monthlyAmortizationResult(computeCurMonthlyPayment());
 		}
 	}
 
