@@ -18,15 +18,6 @@ public class ConsoleLoanView {
 	private final TextDevice textDevice;
 	private Validator validator;
 	
-	private static final double[] borrowAmountRange = new double[] { 0.01d, 1000000000000d };
-	private static final double[] aprRange = new double[] { 0.000001d, 100d };
-	private static final int[] termRange = new int[] { 1, 1000000 };
-
-	private static final String[] userPrompts = { 
-			"Please enter the amount you would like to borrow: ", 
-			"Please enter the annual percentage rate used to repay the loan: ",
-			"Please enter the term, in years, over which the loan is repaid: " };
-
 	@Inject
 	public ConsoleLoanView(TextDevice textDevice, Validator validator) {
 		this.textDevice = textDevice;
@@ -34,7 +25,7 @@ public class ConsoleLoanView {
 	}
 
 
-	public Loan getLoanInfoFromUser() {
+	public Loan getLoanInfo() {
 
 		Double loanAmount = promptForValidDouble("loanAmount", "Please enter the amount you would like to borrow: ");
 		Double interestRate = promptForValidDouble("interestRate", "Please enter the annual percentage rate used to repay the loan: ");

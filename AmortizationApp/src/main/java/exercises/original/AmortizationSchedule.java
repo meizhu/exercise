@@ -1,13 +1,10 @@
 package exercises.original;
 
-import java.io.Console;
-import java.lang.Math;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
-import java.lang.NumberFormatException;
+import java.io.InputStreamReader;
 import java.util.IllegalFormatException;
-import java.lang.IllegalArgumentException;
 
 public class AmortizationSchedule {
 
@@ -79,7 +76,7 @@ public class AmortizationSchedule {
         long totalInterestPaid = 0;
 
         // output is in dollars
-        formatString = "{%1$8d, %2$8.2f, %3$8.2f, %4$8.2f, %5$8.2f, %6$8.2f },\n";
+        formatString = "%1$-20d%2$-20.2f%3$-20.2f%4$.2f,%5$.2f,%6$.2f\n";
         printf(formatString, paymentNumber++, 0d, 0d,
                 ((double) amountBorrowed) / 100d,
                 ((double) totalPayments) / 100d,
@@ -227,14 +224,7 @@ public class AmortizationSchedule {
         for (int i = 0; i< userPrompts.length; ) {
             String userPrompt = userPrompts[i];
             try {
-                //line = readLine(userPrompt);
-            	switch(i) {
-            	case 0: line = "2000"; break;
-            	case 1: line = "3.5"; break;
-            	case 2: line = "5"; break;
-            	default:
-            		throw new IOException();
-            	}
+                line = readLine(userPrompt);
             } catch (IOException e) {
                 print("An IOException was encountered. Terminating program.\n");
                 return;

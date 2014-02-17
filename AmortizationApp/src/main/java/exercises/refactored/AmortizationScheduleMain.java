@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 import exercises.refactored.textdevice.TextDevice;
 
@@ -23,23 +24,26 @@ public class AmortizationScheduleMain {
 		try {
 			Injector injector = createInjector();
 			ConsoleLoanView consoleView = injector.getInstance(ConsoleLoanView.class);
-			Loan loan = consoleView.getLoanInfoFromUser();
-			AmortizationCalculator calc = new AmortizationCalculator(loan);
-			ScheduleResult result = calc.getSchedule();
-			String output = injector.getInstance(AmortizationScheduleFormatter.class).format(loan, result);
-			injector.getInstance(TextDevice.class).printf(output);
+			Loan loan = consoleView.getLoanInfo();
+			AmortizationCalculator calc = new AmortizationCalculator(loan, injector.getInstance(TextDeviceMonthyPaymentObserver.class));
+			calc.getSchedule();
 		} catch (Exception e) {
 			logger.warn("Error occured", e);
 		}
 	}
-	
+
 	private static Injector createInjector() {
-		return Guice.createInjector(new AbstractModule() {
+		return Guice.createInjector(createModule());
+	}
+	
+	static Module createModule() {
+		return new AbstractModule() {
 			@Override protected void configure() {
-				bind(AmortizationScheduleFormatter.class).to(BasicAmortizationScheduleFormatter.class);
 				bind(TextDevice.class).toInstance(TextDevice.defaultTextDevice());
 				bind(Validator.class).toInstance(Validation.buildDefaultValidatorFactory().getValidator());
+				bind(AmortizationCalculator.Observer.class).to(TextDeviceMonthyPaymentObserver.class);
 			}
-		});
+		};
 	}
+	
 }
