@@ -1,10 +1,8 @@
 'use strict';
 
 
-var kraken = require('kraken-js');
-var express = require('express');
-var  paramlogger = require('./lib/paramlogger');
-var   app = {};
+var kraken = require('kraken-js'),
+    app = {};
 
 
 app.configure = function configure(nconf, next) {
@@ -20,8 +18,6 @@ app.requestStart = function requestStart(server) {
 
 app.requestBeforeRoute = function requestBeforeRoute(server) {
     // Run before any routes have been added.
-   server.use(express.logger());    //add standard logger middleware
-   server.use(paramlogger());       //add param logger middleware
 };
 
 

@@ -1,5 +1,36 @@
 {>"layouts/master" /}
+{<title}
+    Current Weather
+{/title}
 
 {<body}
-    <h1>{@pre type="content" key="greeting"/}</h1>
+<div class="container">
+      <h1>Current Weather Demo</h1>
+</div>
+<div class="container">
+     <div class="row">
+    {#weatherList}
+         {#current_observation}
+
+            <div class="col-md-4">
+                <h2>{display_location.full}</h2>
+                    <img height="50" width="50" alt="{icon}" src="{icon_url}"></img>
+                <div>{temperature_string}</div>
+                <div>Feels like: {feelslike_string}</div>
+                <div>Condition: {weather}</div>
+                <div>Humidity:{relative_humidity}</div>
+             </div>
+
+        {/current_observation}
+    {/weatherList}
+      </div>
+
+</div>
+    <div class="container">
+        <div id="footer" class="pull-right footer">
+                         <img alt="WeahterUnderground" width="130" height="80" src="http://icons-ak.wxug.com/graphics/wu2/logo_130x80.png"></img>
+                         <br/>
+                         <span style="padding-top:20px;">Weather data provided by Weather Underground, Inc.</span>
+        </div>
+     </div>
 {/body}

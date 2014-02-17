@@ -1,43 +1,42 @@
 'use strict';
 
 
-var IndexModel = require('../models/index');
 var Client = require('node-rest-client').Client;
-
+var underWeatherBaseUrl = "http://api.wunderground.com/api/3d936d5bee1de223/conditions/q/";
+var stations = ["CA/Campbell", "NE/Omaha", "TX/Austin"];
 
 module.exports = function (app) {
 
-    var model = new IndexModel();
-    var client = new Client();
+   var client = new Client();
 
-    app.get('/', function (req, res) {
-        var underWeatherBaseUrl = "http://api.wunderground.com/api/3d936d5bee1de223/forecast/conditions/q/";
-        var caCampbell =underWeatherBaseUrl +"CA/Campbell.json";
-        var req = client.get(caCampbell, function(data, response){
-                console.log("Response data from " + caCampbell +": " + data);
-           console.log("Type: "+ typeof data);
-            var myObject = JSON.parse(data);
-            console.log("temp: "+ myObject['current_observation']['temp_f']);
-            var forecast = myObject['forecast']['simpleforecast']['forecastday'];
-            console.log("Number of days: " + forecast.length);
-            for(var i=0;i< forecast.length; i++){
-                var dayCast = forecast[i];
-                var currDate = new Date(dayCast['date']['year'], dayCast['date']['month']-1, dayCast['date']['day'] );
-                var date2 = new Date(2014, 1, 15);
-                console.log("Same date? " +(currDate.getTime() ==date2.getTime()) +", date2=" + date2.toDateString());
-                console.log("Day=" + currDate.toDateString()
-                           +", high=" + dayCast['high']['fahrenheit']
-                            +", low=" + dayCast['low']['fahrenheit']
-                            +", condition=" + dayCast['conditions']);
-            }
-             //   console.log(response);
-               model.name =data;
-                res.render('index', model);
-        });
+   app.get('/', function (req, res) {
+        var allWeather={ weatherList: [],
+                        finished: function() {
+                            console.log("current returned data length: " + this.weatherList.length);
+                            return this.weatherList.length===stations.length;
+                        }
 
-
-        //res.render('index', model);
-        
+                        };
+       for(var i=0; i<stations.length; i++)  {
+           fetchWeatherData(stations[i], allWeather, res);
+       }
     });
+
+    function fetchWeatherData(station, allWeather, res){
+        var restUrl = underWeatherBaseUrl + station + ".json";
+        console.log("Fetching weather data: " + restUrl);
+        var req = client.get(restUrl, function(data, response){
+            console.log("Response data from " + restUrl +": " + data);
+          //  console.log("Response object: " + response.toString());
+            var weatherObj = JSON.parse(data);
+            allWeather.weatherList.push(weatherObj);
+            if(allWeather.finished()){
+                console.log("All weather data acquired, about to render");
+                res.render('index', allWeather);
+            }else{
+                console.log("Station " + station + " data is fetched, waiting for others to be done");
+            }
+        });
+    }
 
 };
