@@ -6,15 +6,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
- * User: mzhu
- * Date: 2/13/14 10:06 PM
+ * This is a bean class which wraps information for a loan. The fields are annotated with validation rules. 
+ * The bean can be validated as a whole or each individual fields can be validated, as it is used 
+ * by  <code>LoanInputHandler</code>. This allows the validation rules to be authored in one location. 
+ *  
  */
 public class Loan {
-	
-//	private static final double[] borrowAmountRange = new double[] { 0.01d, 1000000000000d };
-//	private static final double[] aprRange = new double[] { 0.000001d, 100d };
-//	private static final int[] termRange = new int[] { 1, 1000000 };
-
 
 	@DecimalMin("0.01") 
 	@DecimalMax("1000000000000")

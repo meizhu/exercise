@@ -1,7 +1,5 @@
 package exercises.refactored;
 
-import javax.inject.Singleton;
-
 import net.jcip.annotations.NotThreadSafe;
 
 import org.springframework.util.Assert;
@@ -11,20 +9,20 @@ import org.springframework.util.Assert;
  * The usage should be:
  * <ol>
  * <li>
- * Create a new instance of <code>AmortizationCalculator</code>, with loan info passed in. 
+ * Create a new instance of <code>AmortizationCalculator</code>, with loan info and an observer passed in. 
+ * The obserser will get notified as every monthly payment is computed. 
  * </li>
  * <li>
- * Call <code>getSchedule()</code> to get the calculation result.
+ * Call <code>calculateSchedule()</code> starts the calculation.
  * </li>
  * 
  * </ol>
  */
 @NotThreadSafe
-@Singleton
 public class AmortizationCalculator {
 	
 	public interface Observer {
-		void monthlyAmortizationResult(MonthlyPayment monthlyPayment);
+		void monthlyComputed(MonthlyPayment monthlyPayment);
 	}
 	
 	Observer observer;
@@ -32,7 +30,6 @@ public class AmortizationCalculator {
 	private static final int DOLLAR_TO_CENTS_FACTOR = 100;
 	private static final int MONTHS_PAY_YEAR = 12;
 	private final Loan loan;
-	private ScheduleResult schedule = new ScheduleResult();
 	private long monthlyAmount; // in cents
 	private long amountBorrowed; // in cents
 	private int termMonths = 0;
@@ -52,17 +49,25 @@ public class AmortizationCalculator {
 	private long curMonthlyPrincipalPaid;
 	private long curBalance; 
 	
+	/**
+	 *  Create a new instance of <code>AmortizationCalculator</code>.
+	 *  
+	 * @param loanInput - The loan info for calculation
+	 * @param observer - The obserser will get notified as every monthly payment is computed.
+	 */
 	public AmortizationCalculator(Loan loanInput, Observer observer) {
 		Assert.notNull(loanInput, "Loan info must not be null");
 		this.loan = loanInput;
 		this.observer = observer;
 	}
 
+	/**
+	 * Starts all the computation
+	 */
 	public void calculateSchedule() {
 		initFieldsFromLoanInfo();
 		calculateMonthlyAmount();
 		calculateAmortizationTable();
-		summarizeSchedule();
 		calculationDone = true;
 	}
 	
@@ -71,14 +76,7 @@ public class AmortizationCalculator {
 			calculateSchedule();
 		}
 	}
-	private void summarizeSchedule() {
-//		schedule.setPayments(payments);
-		schedule.setMonthlyAmount(monthlyAmount);
-		schedule.setNumberOfPayments(paymentNumber);
-		schedule.setTotalInterestPaid(totalInterestPaid);
-		schedule.setTotalPayments(totalPayments);
-		
-	}
+
 
 	private void initFieldsFromLoanInfo() {
 		termMonths = loan.getTermYears() * MONTHS_PAY_YEAR;
@@ -106,7 +104,7 @@ public class AmortizationCalculator {
 	private void calculateAmortizationTable() {
 		while ((balance > 0) && (paymentNumber <= maxNumberOfPayments)) {
 			//payments.add(computeCurMonthlyPayment());
-			observer.monthlyAmortizationResult(computeCurMonthlyPayment());
+			observer.monthlyComputed(computeCurMonthlyPayment());
 		}
 	}
 
@@ -157,17 +155,17 @@ public class AmortizationCalculator {
 		eachPayment.setRemaining(curBalance);
 		return eachPayment;
 	}
-
-
-
+	
+	/**
+	 * Gets the computed monthly payment amount
+	 * 
+	 * @return
+	 */
 	public long getMonthlyAmount() {
 		doCalculationIfNotDone();
 		return this.monthlyAmount;
 	}
 	
-	public ScheduleResult getSchedule() {
-		doCalculationIfNotDone();
-		return this.schedule;
-	}
+	
 
 }

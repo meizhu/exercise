@@ -23,7 +23,6 @@ public class TestData {
 	        					   {2_000, 3.5, 5, 36.38}
 	        };
 	        
-	        //{ 100, 5.375, 40, 1 } small numbers have problem
 	    }
 
 	

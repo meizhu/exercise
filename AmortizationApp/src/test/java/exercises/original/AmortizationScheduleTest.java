@@ -10,8 +10,7 @@ import exercises.testutil.TestData;
 
 
 /**
- * User: mzhu
- * Date: 2/13/14 10:25 PM
+ * Test for the original AmortizationSchedule
  */
 public class AmortizationScheduleTest {
     @Test(dataProvider = "loanExamples", dataProviderClass=TestData.class)

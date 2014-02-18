@@ -2,6 +2,10 @@ package exercises.refactored.textdevice;
 
 import java.io.Console;
 
+/**
+ * Console as a text input/output device.
+ *
+ */
 public class ConsoleTextDevice extends TextDevice {
 
 	private final Console console;

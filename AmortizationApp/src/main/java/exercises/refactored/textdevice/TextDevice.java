@@ -9,6 +9,11 @@ public abstract class TextDevice {
 
 	public abstract String readLine(String userPrompt);
 	
+	/**
+	 * Returns the optimal input/outpu device from the runtime environment
+	 * 
+	 * @return
+	 */
 	public static TextDevice defaultTextDevice() {
 		if (System.console() != null) {
 			return new ConsoleTextDevice(System.console());

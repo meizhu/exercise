@@ -1,7 +1,7 @@
 package exercises.refactored;
 
 /**
- * An instance of this class captures one monthly payment details
+ * An instance of this class captures one monthly payment details. All the fields are in cents.
  *  
  */
 public class MonthlyPayment {

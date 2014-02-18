@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+ /**
+ * Stream as a text input/output device.
+ *
+ */
 class StreamTextDevice extends TextDevice {
 
 	private final BufferedReader reader;
